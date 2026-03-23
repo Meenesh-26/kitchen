@@ -1,0 +1,20 @@
+services:
+  db:
+    image: mongo:7.0
+    container_name: kitchen-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Secret123!
+    ports:
+      - "27017:27017"
+
+  api:
+    build: ./api
+    image: kitchen-api:local
+    environment:
+      MONGO_URI: mongodb://admin:Secret123!@db:27017/kitchendb?authSource=admin
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db

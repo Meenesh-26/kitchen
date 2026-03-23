@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kitchen-api
+  namespace: kitchen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kitchen-api
+  template:
+    metadata:
+      labels:
+        app: kitchen-api
+    spec:
+      containers:
+      - name: api
+        image: kitchen-api:local
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000

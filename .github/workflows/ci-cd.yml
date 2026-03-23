@@ -1,0 +1,34 @@
+name: Kitchen App CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and start services
+        run: docker compose up -d --build
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for MongoDB and API to be ready..."
+          sleep 15
+          docker ps
+
+      - name: Test API Health Check
+        run: |
+          curl -f http://localhost:3000/health || (docker compose logs api && exit 1)
+
+      - name: Shut down services
+        run: docker compose down
